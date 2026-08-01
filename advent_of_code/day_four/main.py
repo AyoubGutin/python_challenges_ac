@@ -1,3 +1,9 @@
+"""
+Check 8 adjancent positions in a nested array.
+If '@' appears more than 4 times, then it is False
+else, if < 4, then it is True, and we can add one to the counter.
+"""
+
 from pathlib import Path
 
 # test with a sample arr
