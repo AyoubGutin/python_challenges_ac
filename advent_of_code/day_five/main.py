@@ -22,7 +22,7 @@ def check_valid_id(id: int, range: tuple[int, int]):
     return id >= min and id <= max
 
 
-def merge_ranges(ranges: list):
+def merge_ranges(ranges: list[tuple[int, int]]) -> list[tuple[int, int]]:
     ranges = sorted(ranges)
     merged = [ranges[0]]
     for current_min, current_max in ranges[1:]:
@@ -36,7 +36,13 @@ def merge_ranges(ranges: list):
     return merged
 
 
-def part_1(filepath: str | Path):
+def part_1(filepath: str | Path) -> int:
+    """
+    Find all the ids in a given list that fall under a 'fresh' range
+    """
+
+    # can be optimised, we can do a more optimised search to find what range the id should fall under, as our list is sorted.
+    # to-do ^
     fresh_count = 0
     ranges, ids = parse_input(filepath)
     ids.sort()
@@ -50,5 +56,29 @@ def part_1(filepath: str | Path):
     return fresh_count
 
 
-fresh_count = part_1('advent_of_code/day_five/input.txt')
-print(fresh_count)
+def part_2(filepath: str | Path) -> int:
+    """
+    Find all the potential IDS that are fresh
+    """
+    fresh_count = 0
+    ranges, _ = parse_input(filepath)
+    for range in merge_ranges(ranges):
+        min, max = range
+        fresh_count += (
+            max - min
+        ) + 1  # e.g., (10, 20) = 11 ranges (10, 11, 12... , 20)
+
+    return fresh_count
+
+
+def choose_solution(filepath: str | Path, part: int):
+    if part == 1:
+        return part_1(filepath)
+    elif part == 2:
+        return part_2(filepath)
+    else:
+        return 'Error'
+
+
+filepath = 'advent_of_code/day_five/input.txt'
+print(choose_solution(filepath, 2))
