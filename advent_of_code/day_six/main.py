@@ -44,17 +44,17 @@ def grand_total_p2(filepath: str | Path):
     If we have an array of operators
     """
     ops, columns = parse_input_p1(filepath)
-    ops = ops[::-1]
+
     total = 0
 
     for column, op in zip(list(columns)[::-1], ops[::-1]):  # (64, 16, 1512, 8719)
         temp = [
-            tuple(int(digit) for digit in str(num)[::-1]) for num in column
+            tuple(digit for digit in str(num)[::-1]) for num in column
         ]  # [46, 61, 2151, 9178) -> reverses the integer.
         temp = zip_longest(
             *temp, fillvalue=''
         )  # ( (4, 6, 2, 9), (6, 1, 1, 1), (5, 7), (1, 8)) -> pairs each i index in the numbers
-        numbers = [int(''.join(str(digit) for digit in num)) for num in temp]
+        numbers = [int(''.join(digit for digit in num)) for num in temp]
 
         total += reduce(OPERATORS[op], numbers)
 
