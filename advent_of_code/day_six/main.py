@@ -1,7 +1,7 @@
 import operator
 from pathlib import Path
 from functools import reduce
-from itertools import zip_longest
+from itertools import zip_longest, groupby
 
 
 OPERATORS = {'+': operator.add, '*': operator.mul}
@@ -36,6 +36,21 @@ def grand_total_p1(filepath: str | Path):
     return total
 
 
+def parse_input_p2(filepath: str | Path):
+    """
+    1. Reads the entire file as one string, splits each line afterwards
+    2. Parses the operators as one list
+    3. Takes rest of the lines.
+    """
+    lines = Path(filepath).read_text(encoding='utf-8').splitlines()
+
+    ops = lines[-1].split()
+    grid_lines = lines[:-1]
+    columns = zip_longest(*grid_lines, fillvalue=' ')
+
+    return ops, columns
+
+
 def grand_total_p2(filepath: str | Path):
     """
     Similar to p1, but instead of taking the number as the field, a number is composed of reading it from top to bottom in a column
@@ -43,20 +58,22 @@ def grand_total_p2(filepath: str | Path):
 
     If we have an array of operators
     """
-    ops, columns = parse_input_p1(filepath)
+    ops, columns = parse_input_p2(filepath)
 
     total = 0
+    col_numbers = []
 
-    for column, op in zip(list(columns)[::-1], ops[::-1]):  # (64, 16, 1512, 8719)
-        temp = [
-            tuple(digit for digit in str(num)[::-1]) for num in column
-        ]  # [46, 61, 2151, 9178) -> reverses the integer.
-        temp = zip_longest(
-            *temp, fillvalue=''
-        )  # ( (4, 6, 2, 9), (6, 1, 1, 1), (5, 7), (1, 8)) -> pairs each i index in the numbers
-        numbers = [int(''.join(digit for digit in num)) for num in temp]
+    for col in columns:
+        digits = ''.join(c for c in col if c != ' ')
+        col_numbers.append(int(digits) if digits else None)
 
-        total += reduce(OPERATORS[op], numbers)
+    all_groups = [
+        list(group)
+        for is_num, group in groupby(col_numbers, key=lambda x: x is not None)
+        if is_num
+    ]
+
+    total = sum(reduce(OPERATORS[op], numbers) for op, numbers in zip(ops, all_groups))
 
     return total
 
