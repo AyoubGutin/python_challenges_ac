@@ -40,7 +40,7 @@ def parse_input_p2(filepath: str | Path):
     """
     1. Reads the entire file as one string, splits each line afterwards
     2. Parses the operators as one list
-    3. Takes rest of the lines.
+    3. Takes rest of the lines, pads shortest rows with spaces at the end, so alignmenti s perseved.
     """
     lines = Path(filepath).read_text(encoding='utf-8').splitlines()
 
