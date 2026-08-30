@@ -78,13 +78,33 @@ y
   ; if branch-structure is a number, return the weight
   ; if branch-structure is a mobile,. then we recurivsely call
 
-  (define (branch-weight branch)
-    (let ((struct (branch-structure branch)))
-          (if (pair? struct)
-              (total-weight struct) ; assume total-weight will eventually get the right number when passing a mobile.
-              struct))) ; base case - return number
-
   (+ (branch-weight (left-branch mobile)) (branch-weight (right-branch mobile)))) ; wishful thinking - we assume we have an abstracted function that gets the weight of each branch before we make one.
 
-(total-weight y)
+(define (branch-weight branch)
+  (let ((struct (branch-structure branch)))
+    (if (pair? struct)
+        (total-weight struct)
+        struct)))
 
+; a mobile is balanced if:
+; Length(left) * Weight(left) = Length(right) * Weight(right). -> Weight would be recurivsely calculated downwards of that specific branch.
+; sub mobiles are balanced.
+
+(define (balanced? mobile)
+  (define (branch-balanced? branch)
+    (let ((struct (branch-structure branch)))
+      (if (pair? struct)
+          (balanced? struct)
+          #t)))
+  
+    (let ((lb (left-branch mobile))
+          (rb (right-branch mobile)))
+      (and (= (* (branch-length lb) (branch-weight lb)) (* (branch-length rb) (branch-weight rb)))
+          (branch-balanced? lb)
+          (branch-balanced? rb))))
+
+(balanced? y)
+  
+  
+  
+  
