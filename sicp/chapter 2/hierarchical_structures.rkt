@@ -106,5 +106,86 @@ y
 (balanced? y)
   
   
+
+#lang sicp
+
+; -- helpers 
+(define (square x) (* x x))
+
+(define (square-list items)
+  (if (null? items)
+      nil
+      (cons (square (car items)) (square-list (cdr items)))))
+
+(define (square-list-m items)
+  (map square items))
+
+
+; Exercise 2.30
+
+; Define a procedure square-tree analogous to square-list.
+
+; directly without map
+(define (square-tree tree)
+  (cond ((null? tree) nil)
+        ((not (pair? tree)) (square tree))
+        (else
+         (cons (square-tree (car tree)) (square-tree (cdr tree))))))
+
+; with map
+(define (square-tree-map tree)
+  (map (lambda (sub-tree)
+         (if (not (pair? sub-tree))
+             (square sub-tree)
+             (square-tree-map sub-tree)))
+       tree))
+
+; Exercixe 2.31
+
+; Abstract 2.30 to produce tree-map
+
+(define (tree-map proc tree)
+  (map (lambda (sub-tree)
+         (if (not (pair? sub-tree))
+             (proc sub-tree)
+             (tree-map proc sub-tree)))
+       tree))
+
+(define (square-tree-abstract tree)
+  (tree-map square tree))
+
+(square-tree-abstract (list 3 4 (list 4 5 6) 23))
+
+
+; 2.32
+
+; set -> distinct elements
+; set of all subsets of the set as a list of lists
+; (1 2 3) -> set of all subsets = (() (3) (2) (2 3) (1) (1 3) (1 2) (1 2 3))
+
+(define (subset s)
+  (if (null? s)
+      (list nil)
+      (let ((rest (subset (cdr s))))
+        (append rest (map
+                      (lambda (sub-tree)
+                        (cons (car s) sub-tree))
+                      rest)))))
+
+; Explanation
+; we assume (rest (subset (cdr s))) gets all the subsets for the cdr of s.
+; once assumed, we note down the result of what this would be. it is half of the answer.
+; to get the other half, we cons the car of s to every element of s, which would be a map function.
+
+; trace:
+; (subset ( 1 2 3))
+; wind down the call stack to base case: (subset nil).
+; wind up once the call stack. (subset = 3) -> (append (nil) ((3))) = ( () (3))
+; wind up again (subset 2 3) -> rest = ( () (3) ). (map ... ) -> ((2) (2 3)). (append rest mapped) = ( rest mapped ).
+
+
+
+
+
   
   
