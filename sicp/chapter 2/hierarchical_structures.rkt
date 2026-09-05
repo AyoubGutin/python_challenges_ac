@@ -183,6 +183,128 @@ y
 ; wind up once the call stack. (subset = 3) -> (append (nil) ((3))) = ( () (3))
 ; wind up again (subset 2 3) -> rest = ( () (3) ). (map ... ) -> ((2) (2 3)). (append rest mapped) = ( rest mapped ).
 
+(define (sum-odd-squares tree)
+	(cond ((null? tree) 0)
+		  ((not (pair? tree))
+			  (if (odd? tree) 
+				  (square tree) 
+				  0))
+		  (else
+			  (+ (sum-odd-squares (car tree))
+				 (sum-odd-squares (cdr tree))))))
+
+
+
+
+(define (accumulate op initial sequence)
+	(if (null? sequence)
+		initial
+		(op (car sequence)
+			(accumulate op initial (cdr sequence)))))
+
+(define (reverse sequence)
+  (accumulate (lambda (x y) (append y (list x))) nil sequence))
+
+(reverse (list 3 4 5))
+	
+
+
+; redefinition of count-leaves using accumulate.
+; maps through a deep list, replacing each leave with 1, to be counted using accumulate.
+(define (count-leaves t)
+  (accumulate +
+              0
+              (map (lambda (subtree)
+                     (if (not (pair? subtree))
+                         1
+                         (count-leaves subtree)))
+                   t)))
+
+
+
+; this procedure needs to combine sequences of a sequence, like matrix addition
+(define (accumulate-n op init seqs)
+  (if (null? (car seqs))
+      nil
+      (cons (accumulate op init (map car seqs))
+            (accumulate-n op init (map cdr seqs)))))
+
+(accumulate-n + 0 (list (list 1 2 3 4) (list 5 6 7 8)))
+
+
+; dot product of vectors, represented as sequence of numbers
+(define (dot-product v w) (accumulate + 0 (map * v w)))
+
+; multiplication of matrix and vector. 
+(define (matrix-*-vector m v)
+  (map (lambda (row) (dot-product row v))
+      m))
+
+(matrix-*-vector (list (list 1 2) (list 3 4)) (list 5 10))
+
+; transpose of matrix
+(define (transpose mat)
+  (accumulate-n cons nil (list (list 1 2 3) (list 4 5 6))))
+
+
+(define (matrix-*-matrix m n)
+  (let ((cols (transpose n)))
+    (map (lambda (row) (map (lambda (col) (dot-product row col)) cols)) m)))
+
+
+
+; flat list of integers from low to high. tail-recursive, counting down from high to low to build list in asc order.
+(define (enumerate-interval low high)
+  (define (iter current acc)
+    (if (< current low)
+        acc
+        (iter (- current 1) (cons current acc))))
+  (iter high nil))
+
+(enumerate-interval 1 5)
+
+
+
+; ---------
+
+
+
+; Exercise 2.40
+
+; unique-pairs, given integer n, genrate pairs (i, j), with 1 <= j < i <= n.
+; it calls on flatmap, which uses accumulate and append to make a flat sequence from our nested map. 
+
+(define (flatmap proc seq)
+  (accumulate append nil (map proc seq)))
+
+(define (unique-pairs n)
+  (flatmap (lambda (i) (map (lambda (j) (list i j)) (enumerate-interval 1 (- i 1)))) (enumerate-interval 1 n)))
+
+(unique-pairs 5)
+
+
+; Exercise 2.41
+; Ordered triples of distinct positive integers, i, j, k, <= n that sum to a given integer s.
+
+(define (filter predicate seq)
+  (cond ((null? seq) nil)
+        ((predicate (car seq)) (cons (car seq) (filter predicate (cdr seq))))
+        (else
+         (filter predicate (cdr seq)))))
+
+  
+(define (unique-triples n)
+  (flatmap (lambda (i)
+             (flatmap (lambda (j)
+                        (map (lambda (k) (list i j k))
+                             (enumerate-interval 1 (- j 1)))) 
+                      (enumerate-interval 1 (- i 1))))         
+           (enumerate-interval 1 n)))
+
+(define (triple-sum-s n s)
+  (filter (lambda (triple) (= (accumulate + 0 triple) s)) (unique-triples n)))
+
+(triple-sum-s 6 10)
 
 
 
