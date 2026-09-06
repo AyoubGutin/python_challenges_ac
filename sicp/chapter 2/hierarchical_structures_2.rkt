@@ -70,4 +70,23 @@
          (cons (car words) (censor (cdr words))))))
     
     
- 
+ ; Exercise 2.45
+
+; Right split and up split can be abstracted as higher order operations, via the split procedure
+
+(define (right-split painter n)
+  (if (= n 0)
+      painter
+      (let ((smaller (right-split (painter (- n 1)))))
+
+        (beside painter (below smaller smaller)))))
+
+
+; op1 = outer combiner, op2 = inner combiner.
+(define (split op1 op2)
+  (lambda (painter)
+    (if (= n 0)
+        painter
+        (let ((smaller (split (painter (-n 1)))))
+
+          (op1 painter (op2 smaller smaller))))))
