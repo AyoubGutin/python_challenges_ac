@@ -90,3 +90,51 @@
         (let ((smaller (split (painter (-n 1)))))
 
           (op1 painter (op2 smaller smaller))))))
+
+
+; Exercixe 2.46
+
+(define (make-vect x y)
+  (cons x y))
+
+(define (xcor-vect v) (car v))
+
+(define (ycor-vect v) (cdr v))
+
+(define (add-vect v1 v2)
+  (make-vect (+ (xcor-vect v1) (xcor-vect v2)) (+ (ycor-vect v1) (ycor-vect v2))))
+
+(define (sub-vect v1 v2)
+  (make-vect (- (xcor-vect v1) (xcor-vect v2)) (- (ycor-vect v1) (ycor-vect v2))))
+
+(define (scale-vect v s)
+  (make-vect (* s (xcor-vect v)) (* s (ycor-vect v))))
+
+
+
+; Exerecise 2.47
+(define (make-frame1 origin edge1 edge2)
+  (list origin edge1 edge2))
+
+(define (origin-frame1 v)
+  (car v))
+
+(define (edge1-frame1 v)
+  (cadr v))
+
+(define (edge2-frame1 v)
+  (car (cdr (cdr v))))
+
+
+(define (make-frame2 origin edge1 edge2)
+  (cons origin (cons edge1 edge2)))
+
+(define (origin-frame2 v)
+  (car v))
+
+(define (edge1-frame2 v)
+  (cadr v))
+
+(define (edge2-frame2 v)
+  (cdr (cdr v)))
+  
