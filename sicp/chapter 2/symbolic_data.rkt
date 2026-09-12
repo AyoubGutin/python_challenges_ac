@@ -110,3 +110,50 @@
 
 (define (multiplier p) (car p))
 (define (multiplicand p) (caddr p))
+
+
+
+; Exercise 2.59
+
+; Standard algerbraic notation like (x + 3 * (x + y + 2)).
+; Drops unnecessary parantheses, and assumes multiplication is done before addition.
+; this is different to 2.58 because the top level list not 3 element package anymore; + could be anywhere, so we need to scan
+
+; case 1 (x + 3 * y).
+; addend is the left side (x) -> need to clean up single elements
+; augend is the right side (3 * y)
+
+; case 2 (x * 3 * 5 + 5)
+; addend is (x * 3 * 5)
+; augent is (5) -> need to clean up single elements
+
+
+; sums
+(define (split-sum exp)
+  (define (iter remaining acc)
+    (cond ((null? remaining) #f)
+          ((eq? (car remaining) '+)
+           (cons (reverse acc) (cdr remaining))))
+          (else
+           (iter (cdr remaining) (cons (car remaining) acc))))
+
+  (iter exp nil))
+
+(define (sum? x)
+  (and (pair? x) (pair? (split-sum x))))
+
+(define (clean-up exp)
+  (if (and (list? exp) (= (length exp) 1))
+      (car exp)
+      exp))
+
+(define (addend s) (clean-up (car (split-sum s))))
+(define (augend s) (clean-up (cdr (split-sum s))))
+
+
+; multiplication - not associative, so dont scan.
+; deriv dispatcher checks sum? first, so we dont change product? as it owuld have intercepted an exp which has a top-level +
+
+(define (multiplier p) (clean-up (car p)))
+(define (multiplicand p) (clean-up (cddr p)))
+           
