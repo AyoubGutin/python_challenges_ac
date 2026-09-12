@@ -71,3 +71,42 @@
   (if (null? (cdddr s)) ; cdr of the cdr of the cdr. checks if there is more than two elements(not including the car which is +)
       (caddr s) ; if so, the augend is just the last term
       (cons '+ (cddr s)))) ; otherwise, we extract the list of remaining elmeents, and attaching the + symbol. 
+
+
+; Exerice 2.58
+; Changing the deriv program to work with infix operators e.g., (x + (3 * (x + (y + 2))))
+
+(define (=number? exp num)
+	(and (number? exp) (= exp num)))
+
+; sums
+(define (make-sum a1 a2)
+	(cond ((=number? a1 0) a2)
+		  ((=number? a2 0) a1)
+		  ((and (number? a1) (number? a2))
+		    (+ a1 a2))
+		  (else (list a1 '+ a2))))
+
+(define (sum? x)
+  (and (pair? x) (eq? (cadr x) '+)))
+
+(define (addend s) (car s))
+(define (augend s)
+  (caddr s)) ; (x + y) or (x + (3 + y)) car = x, cddr = (y) or ((3 + y)), eitherway we need car of cddr.
+
+; products
+(define (make-product m1 m2)
+	(cond ((or (=number? m1 0) (=number? m2 0)) 0)
+              ((=number? m1 1) m2)
+              ((=number? m2 1) m1)
+              ((and (number? m1) (number? m2))
+               (* m1 m2))
+              (else
+               (list m1 '* m2))))
+
+
+(define (product? x)
+  (and (pair? x) (eq? (cadr x) '*)))
+
+(define (multiplier p) (car p))
+(define (multiplicand p) (caddr p))
