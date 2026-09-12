@@ -73,7 +73,7 @@
       (cons '+ (cddr s)))) ; otherwise, we extract the list of remaining elmeents, and attaching the + symbol. 
 
 
-; Exerice 2.58
+; Exerice 2.58a
 ; Changing the deriv program to work with infix operators e.g., (x + (3 * (x + (y + 2))))
 
 (define (=number? exp num)
@@ -113,7 +113,7 @@
 
 
 
-; Exercise 2.59
+; Exercise 2.58b
 
 ; Standard algerbraic notation like (x + 3 * (x + y + 2)).
 ; Drops unnecessary parantheses, and assumes multiplication is done before addition.
@@ -157,3 +157,29 @@
 (define (multiplier p) (clean-up (car p)))
 (define (multiplicand p) (clean-up (cddr p)))
            
+
+
+; exercise 2.59
+; to union two sets, we assume we already have the union of cdr set 1 and set 2.
+; so only join to join the car1 with the result
+; to stop the recursion, we check if set1 is null, if so, return set2.
+
+(define (union-set set1 set2)
+  (cond ((null? set1) set2)
+        (else (adjoin-set (car set1) (union-set (cdr set1) set2)))))
+
+
+; Exercise 2.60
+; sets can now be internally represented as lists that can have duplicates
+; {1, 2, 3} -> (2 3 2 1 3 2 2...)
+
+; element-of-set? wouldn't change as we are still checking if a element is a member of a list. O(n).
+
+; adjoin-set would change, as we don't need to worry about duplicates, which increases efficiency. This is O(1)
+(define (adjoin-set x set)
+  (cons x set))
+
+; union-set wouldn't change as it is an abstraction that uses adjoin-set, and we already changed adjoin-set. O(n)
+
+; intersection-set wouldn't change as it is an abstraction that uses element-of-set, and we already changed element-of-set. O(nm)
+
