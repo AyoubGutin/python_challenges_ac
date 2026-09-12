@@ -183,3 +183,16 @@
 
 ; intersection-set wouldn't change as it is an abstraction that uses element-of-set, and we already changed element-of-set. O(nm)
 
+
+
+; Exercise 2.61
+; Implementation of adjoin-set using the ordered representation.
+
+(define (adjoin-set x set)
+  (cond ((null? set) (cons x nil)) ; if the set is null, return (x)
+        ((= x (car set)) set) ; if set contains x, we just return original set
+        ((< x (car set)) (cons x set)) ; if x < current element of set, then it should be placed before current element
+        (else
+         (cons (car set) (adjoin-set x (cdr set)))))) ; otherwise, assume the recursive call will place x in right spot.
+         
+
