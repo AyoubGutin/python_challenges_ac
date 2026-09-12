@@ -56,3 +56,18 @@
                             (deriv base var))))))
                  
 		(else (error "unknown expression type: DERIV" exp))))
+
+
+; Exercise 2.57
+; Extend differentiation to handle sums and products of arbitrary numbers of two or more terms.
+; (+ a b c)
+
+(define (make-sum a1 a2) (list '+ a1 a2))
+; this was the origfinal representation for a sum. since the inputs can include two or more terms then we have to change the
+; selectors.
+
+(define (addend s) (cadr s)) ; first term.
+(define (augend s)
+  (if (null? (cdddr s)) ; cdr of the cdr of the cdr. checks if there is more than two elements(not including the car which is +)
+      (caddr s) ; if so, the augend is just the last term
+      (cons '+ (cddr s)))) ; otherwise, we extract the list of remaining elmeents, and attaching the + symbol. 
