@@ -1,5 +1,6 @@
 #lang sicp
 ; Quotations
+; note, program contains abstractions + snippets from exercises, and duplicate namings, so will not run directly.
 
 ; Exercise 2.54
 
@@ -196,3 +197,20 @@
          (cons (car set) (adjoin-set x (cdr set)))))) ; otherwise, assume the recursive call will place x in right spot.
          
 
+; Exercise 2.62
+; O(n) implementation of union-set for sets represented as ordered lists.
+
+; to do this, compare the heads of the two sets as they are ordered.
+; ruyns in O(n+m) time, which is O(n), as every pass removes one or two elements from the sets.
+(define (union-set set1 set2)
+  (cond ((null? set1) set2)
+        ((null? set2) set1)
+        (else
+         (let ((x1 (car set1))
+               (x2 (car set2)))
+           (cond ((= x1 x2)
+                  (cons x1 (union-set (cdr set1) (cdr set2))))
+                 ((< x1 x2)
+                  (cons x1 (union-set (cdr set1) set2)))
+                 ((> x1 x2)
+                  (cons x2 (union-set set1 (cdr set2)))))))))
