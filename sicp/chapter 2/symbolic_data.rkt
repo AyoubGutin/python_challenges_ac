@@ -214,3 +214,21 @@
                   (cons x1 (union-set (cdr set1) set2)))
                  ((> x1 x2)
                   (cons x2 (union-set set1 (cdr set2)))))))))
+
+
+; Exericse 2.66
+
+; A procedure to lookup a record for a given key, with a set of records structured as a binary tree, which is ordered by numericla value
+
+; a tree is represented as : (current, left branch, right branch)
+
+(define (lookup given-key tree-of-record)
+  (if (null? tree-of-record)
+      false
+      (let ((current (entry tree-of-record))
+         (lb (left-branch tree-of-record))
+         (rb (right-branch tree-of-record)))
+    (cond ((= given-key (key current)) current)
+          ((< given-key (key current)) (lookup given-key lb))
+          (else
+           (lookup given-key rb))))))
