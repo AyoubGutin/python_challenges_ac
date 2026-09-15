@@ -232,3 +232,27 @@
           ((< given-key (key current)) (lookup given-key lb))
           (else
            (lookup given-key rb))))))
+
+
+; Exercise 2.68
+
+(define (encode message tree)
+  (if (null? message)
+      nil
+      (append
+       (encode-symbol (car message) tree)
+       (encode (cdr message) tree))))
+
+
+(define (encode-symbol symbol tree)
+  (if (leaf? tree)
+      nil
+      (let ((is-left? (element-of-set? symbol (left-branch tree)))
+             (is-right (element-of-set? symbol (right-branch tree)))
+             (current-bit
+              (cond (is-left? 0)
+                    (is-right? 1))))
+         (cons current-bit (encode-symbol symbol
+                                          (cond (is-left? (left-branch tree))
+                                                (is-right? (right-branch tree))
+                                                (else (error "symbol not in tree"))))))))
