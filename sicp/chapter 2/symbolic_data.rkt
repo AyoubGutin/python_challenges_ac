@@ -256,3 +256,28 @@
                                           (cond (is-left? (left-branch tree))
                                                 (is-right? (right-branch tree))
                                                 (else (error "symbol not in tree"))))))))
+
+
+
+
+; Exericse 2.69
+(define (adjoin-set x set)
+  (cond ((null? set) (list x))
+        ((< (weight x) (weight (car set))) 
+         (cons x set))
+        (else 
+         (cons (car set)
+               (adjoin-set x (cdr set))))))
+
+
+(define (generate-huffman-tree pairs)
+  (successive-merge
+   (make-leaf-set pairs)))
+
+(define (successive-merge leaf-set)
+  (cond ((= (length leaf-set) 1) (car leaf-set)) ; leaf-set would look like ( (tree-node) ). 
+        (else
+         (successive-merge
+         (adjoin-set ; merges into new sub-tree.
+          (make-code-tree (car leaf-set) (cadr leaf-set)) ; ordered list, so smallest in front - local rule
+          (cddr leaf-set))))))
